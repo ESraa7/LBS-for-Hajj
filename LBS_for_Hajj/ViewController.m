@@ -10,12 +10,14 @@
 
 #import <CoreLocation/CoreLocation.h>
 #import <CoreBluetooth/CoreBluetooth.h>
-@interface ViewController ()
+@interface ViewController ()<UITableViewDelegate, UITableViewDataSource>{
+    NSArray *languages;
+}
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @end
 
 @implementation ViewController
-NSString *mapId;
 CBCentralManager *bluetoothManager;
 CLLocationManager* locationManager;
 
@@ -23,7 +25,9 @@ TGMapViewController *tgController;
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    mapId = @"131";
+    self.txtMapId.text = @"131";
+    languages = @[@"عربي",@"English",@"বাংলাদেশ",@"भारतीय",@"Français",
+                  @"Indonesia",@"Pilipinas",@"Deutsch",@"Japanese",@"Italian"];
 }
 
 - (void)mapViewController:(TGMapViewController *)controller indoorLocationManager:(EILIndoorLocationManager *)manager
@@ -163,7 +167,7 @@ didFailToUpdatePositionWithError:(NSError *)error {
         // load map
         [controller dispatch:@{
                                @"type": @"LOAD_MAP",
-                               @"map_id": mapId,
+                               @"map_id": self.txtMapId.text,
                                @"theme": @{
                                        @"primary":@"brown",
                                        }
@@ -296,5 +300,25 @@ didFailToUpdatePositionWithError:(NSError *)error {
     }
 }
 
+
+
+
+- (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
+    static NSString *cellId = @"cell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
+    cell.textLabel.text = [languages objectAtIndex:indexPath.row];
+    return cell;
+}
+
+- (NSInteger)tableView:(nonnull UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return languages.count;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    TGMapViewController *mapViewController = [[TGMapViewController alloc] init];
+    mapViewController.delegate = self;
+    [self.navigationController pushViewController:mapViewController animated:YES];
+}
 
 @end

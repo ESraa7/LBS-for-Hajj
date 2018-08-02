@@ -11,5 +11,7 @@
 
 @interface ViewController : UIViewController<TGMapViewControllerDelegate>
 
+@property (weak, nonatomic) IBOutlet UITextField *txtMapId;
+
 @end
 
